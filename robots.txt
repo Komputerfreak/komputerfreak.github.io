@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# This will not work... 
+# Stop trying to find my secret directories NOOB!
+# errare humanum est
+
+# Welcome to my Page
+
+

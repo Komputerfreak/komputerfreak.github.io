@@ -1,0 +1,11 @@
+/* colors.css */
+:root {
+    --background-color: #121415;
+    --primary-color: #21A821;
+    --primary-color-light: #1CFF1C;
+    --button-color: #252829;   
+    --accent-color: #D6BB27;    
+    --info-color: #3399CC;
+    --light: #C3C3C3;       
+    --text-color: #838383;       
+}
