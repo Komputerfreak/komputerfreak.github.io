@@ -7,12 +7,17 @@
 
 
 body {
+    margin: 0 20px 0 50px;
+    padding: 20px;
+    box-sizing: border-box;
     background-color: var(--background-color);
     color: var(--text-color);
-    font-family: 'JetBrains Mono';
-    padding: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.3;
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
+    max-width: 90vw;
 }
 
 h1 {
@@ -104,6 +109,14 @@ details a {
     text-decoration: underline;
 }
 
+.flag {
+    margin: 10px;
+    color: var(--accent-color);
+    font-weight: bolder;
+    font-size: 17px;
+    font-style: italic;
+}
+
 details a:hover {
     color: var(--light);
 }
@@ -113,10 +126,10 @@ blockquote {
 }
 article p {
     color: var(--light);
+    max-width: 70%;
 }
 
 article a {
-    display: block;
     margin-bottom: 10px;
     color: var(--primary-color);
     text-decoration: underline;
@@ -124,4 +137,30 @@ article a {
 
 article a:hover {
     color: var(--light);
+}
+
+img {
+    border-radius: 15px;
+    border: 2px solid var(--text-color);
+    box-shadow: 5px 5px 20px 5px rgba(0, 0, 0, 0.256);
+    max-width: 60vw;
+    max-height: 600px;
+}
+
+hr {
+    margin-left: 0;
+    max-width: 70vw;
+    border: none;
+    border-top: 2px solid var(--button-color);
+}
+
+span {
+    color: var(--accent-color);
+}
+
+code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 17px;
+    color: var(--code-color);
+    font-weight: 600;
 }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,8 @@
     <link rel="stylesheet" href="../../styles/main.css">
     <link rel="stylesheet" href="../../styles/colors.css">
 </head>
-<body>
+
+<body class="write-up">
     <h1>k-kaufhold</h1>
 
 
@@ -24,11 +26,76 @@
                 <a href="https://tryhackme.com/room/blockroom" target="_blank" class="ctf-link">Link zur CTF</a>
                 <p class="sub-header">Aufgabe 1</p>
                 <blockquote>| What is the username of the first person who accessed our server?</blockquote>
-                <p>Das ist der Inhalt des ersten Artikels</p>
+                <p>In der entpackten Archivdatei sind 2 Dateien: <span>lsass.DMP </span>und <span>traffic.pcapng</span>
+                </p>
+                <p><em>LSASS (Local Security Authority Subsystem Service)</em> ist ein <em>Windows</em>-Prozess, der für
+                    die Verwaltung von Sicherheitsrichtlinien, die Authentifizierung von Benutzern und die Speicherung
+                    von Anmeldeinformationen im Arbeitsspeicher zuständig ist.</p>
+                <p>Eine <span>.dmp-Datei</span> (Dump-Datei) ist eine <span>Speicherabbild-Datei</span>, die den Inhalt
+                    des Arbeitsspeichers eines Prozesses oder des gesamten Systems zu einem bestimmten Zeitpunkt
+                    enthält, meist für Debugging oder Fehleranalysen.</p>
+                <p>Wir können daraus Nutzerdaten extrahieren.</p>
+                <p>Starte mit dem Öffnen der <span>.pcapng</span>-Datei in <em>Wireshark</em>.</p>
+                <p>Den Nutzer und damit die Lösung der ersten Frage, kannst du in der Zeile der NTLMSSP
+                    Authentifizierung sehen:</p>
+                <p><img src="../../assets/img/posts/writeups/block-1.png" alt="test image"></p>
                 <details>
-                    <summary>Lösungen / Flags anzeigen</summary>
-                    <p>Flag 1: </p>
-                  </details>
+                    <summary>Lösung anzeigen (ACHTUNG: SPOILER)</summary>
+                    <p class="flag">mrealman</p>
+                </details>
+                <hr>
+                <p class="sub-header">Aufgabe 2</p>
+                <blockquote>| What is the password of the user in question 1?
+                </blockquote>
+                <p>Für diese Aufgabe habe ich <a href="https://github.com/skelsec/pypykatz" target="_blank">pypykatz</a>
+                    verwendet.</p>
+                <p>Installiere pypykatz indem du eine <em>venv</em> mit Python erstellst
+                    (<code>python3 -m venv .venv</code>), diese aktivierst (<code>source .venv/bin/activate</code>) und
+                    danach mit <code>pip install pypykatz</code> das tool innerhalb der <em>venv</em> installierst.</p>
+                <p>Anschließend kannst du dir mit der Option <code>-h</code> die Hilfe anzeigen lassen:</p>
+                <p><img src="../../assets/img/posts/writeups/block-2.png" alt="pypykatz"></p>
+                <p>Hier ist die Option <code>lsa</code> die Richtige für unser <span>lsass.dmp file</span>.</p>
+                <p>Mit dem Befehl: <code>pypykatz lsa minidump lsass.DMP</code> lassen sich nun wichtige Informationen
+                    aus der Datei extrahieren.</p>
+                <p><img src="../../assets/img/posts/writeups/block-3.png" alt="pypykatz"></p>
+                <p>Dieser NT-Hash kann nun mit <a href="https://crackstation.net/" target="_blank">Crackstation</a> oder
+                    einem Tool wie <em>John-The-Ripper</em> gecracked werden.</p>
+                <p>Ich werde in diesem Durchlauf mit <em>John-The-Ripper</em> versuchen diesen Hash zu knacken.</p>
+                <p>Das Format für <em>John</em> sieht so aus: <span>Benutzername:NT-Hash</span>
+                    <br>
+                    Zuerst erzeuge ich mir eine neue Text-Datei (<em>nt-hash.txt</em>) mit dem folgenden Inhalt:
+                    <strong>mrealman:$NT$1f9175a516211660c7a8143b0f36ab44</strong>
+                    <br>
+                </p>
+                <p>Diese Nutze ich nun für <em>John</em> mit folgendem Befehl:
+                    <code>john --format=nt nt-hashes.txt</code>
+                </p>
+                <p>Wenn die Standard-Wordlist nicht funktioniert, bzw. das Passwort nicht beinhaltet, kann mit folgendem
+                    Befehl eine andere Wordlist verwendet werden:
+                    <br>
+                    <code>john --format=nt --wordlist=/pfad/zu/deinem_wörterbuch.txt nt-hashes.txt</code>
+                </p>
+                <p>Hier der Befehl mit der <em>Rockyou.txt</em> Wordlist und dem erfolgreichen Crackdurchlauf:</p>
+                <p><img src="../../assets/img/posts/writeups/block-3-1.png" alt="pypykatz"></p>
+
+                <p>Mit Crackstation funktioniert das Cracken des NT-Hashes ebenfalls: </p>
+                <p><img src="../../assets/img/posts/writeups/block-4.png" alt="pypykatz"></p>
+                <details>
+                    <summary>Lösung anzeigen (ACHTUNG: SPOILER)</summary>
+                    <p class="flag">Blockbuster1</p>
+                </details>
+                <hr>
+                <p class="sub-header">Aufgabe 3</p>
+                <blockquote>| What is the flag that the first user got access to?
+                </blockquote>
+                <p>Was haben wir bisher?</p>
+                <p>Benutzername -> Gefunden in traffic.pcapng <br>
+                Domäne -> Gefunden in traffic.pcapng <br>
+                NT-Hash oder Passwort -> Gefunden in lsass.DMP <br>
+                Mit diesen Informationen können wir in Wireshark entsprechende SMB Pakete entschlüsseln, indem wir das Passwort hinterlegen.</p>
+                <p>Dazu in Wireshark auf <em>Edit -> Preferences -> Protocols</em> und in der Liste <span>NTLMSSP</span> selektieren und das zuvor gefundene Passwort eingeben und unten bestätigen: </p>
+                <p><img src="../../assets/img/posts/writeups/block-4-1.png" alt="pypykatz"></p>
+                <p></p>
 
             </article>
         </section>
@@ -38,4 +105,5 @@
         <div></div>
     </footer>
 </body>
+
 </html>
