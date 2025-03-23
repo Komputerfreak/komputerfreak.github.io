@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing CTF Write-Up</title>
+    <link rel="stylesheet" href="../../styles/main.css">
+    <link rel="stylesheet" href="../../styles/colors.css">
+</head>
+
+<body class="write-up">
+    <h1>k-kaufhold</h1>
+
+
+    <nav>
+        <ul>
+            <li><a href="../../index.html">Home</a></li>
+        </ul>
+        <hr>
+    </nav>
+    <h3 class="sub-header">Billing Room CTF Write-Up</h3>
+    <main>
+        <section>
+            <article>
+                <a href=https://tryhackme.com/room/billing" target="_blank" class="ctf-link">Link zur CTF</a>
+                <p class="sub-header">Aufgabe 1</p>
+                <blockquote>| What is user.txt?</blockquote>
+                <p>Der erste Schritt, den ich so gut wie immer in einer CTF mit einer Ziel-IP durchführe, ist die IP mit
+                    Port 80 im Browser einzugeben.</p>
+                <p><img src="../../assets/img/posts/writeups/billing-1.png" alt=""></p>
+                <p>Hier erscheint ein Anmeldefenster und im Tab ist der Titel <span>MagnusBilling</span> zu erkennen.
+                </p>
+                <p>Zusätzlich ist das Verzeichnis der Startseite zu erkennen. Mit Gobuster können wir weitere
+                    Verzeichnisse erkunden</p>
+                <p>Mit folgendem Befehl habe ich die Verzeichnissuche gestartet:
+                    <br><code>gobuster dir -u http://10.10.206.85/mbilling/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt</code>
+                </p>
+                <p>Das Ergebnis ist in folgendem Bild zu sehen:</p>
+                <p><img src="../../assets/img/posts/writeups/billing-2.png" alt=""></p>
+                <p>Wenn wir alle Verzeichnisse manuell durchprobieren, also <em>Target-IP:80/mbilling/archive</em>,
+                    <em>Target-IP:80/mbilling/resources</em> usw. stoßen wir auf keine interessanten Daten :-(
+                </p>
+                <p>Deswegen habe ich mit dem Tool nmap fortgesetzt:</p>
+                <p><code>nmap -A -T4 10.10.206.85</code><br>Dabei erhielt ich folgende Ausgabe: <br> <img
+                        src="../../assets/img/posts/writeups/billing-3.png" alt=""> </p>
+                <p>Aber auch hier sind lediglich ein bekannter Service (Port 80) und 2 weitere, aber relativ
+                    uninteressante Dienste entdeckt worden.</p>
+                <p>An dieser Stelle führe ich meistens mit einer Internetrecherche fort. Also habe ich
+                    "<span><em>MagnusBilling CVE Vulnerabilities</em></span>" gesucht und bin fündig geworden.</p>
+                <p>Es gibt diese Webseite (<a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=2023-30258">CVE
+                        2023-30258</a>) mit interessanten Informationen.</p>
+                <p>Also habe ich Metasploit gestartet und nach dieser CVE gesucht und einen passenden Exploit gefunden:
+                </p>
+                <p><img src="../../assets/img/posts/writeups/billing-4.png" alt=""></p>
+                <p>In meinem Fall habe ich mit <code>use 0</code> den Exploit ausgewählt.</p>
+                <p>Hier muss nur noch der passende <span>LHOST</span> (die eigene THM-VPN IP) und RHOST (Ziel-IP)
+                    eingegeben werden. <br>Anschließend <em>run</em> oder <em>exploit</em> eingeben in msfconsole.</p>
+                <p>Es öffnet sich eine <em>meterpreter session</em>. Da ich aber die <em>Bash Shell</em> bevorzuge habe
+                    ich mit dem Befehl <br> <code>SHELL=/bin/bash script -q /dev/null</code> eine <em>Bash Shell</em>
+                    geöffnet. (rot markiert)</p>
+                <p>Anschließend habe ich nach der <span>Flag (user.txt)</span> gesucht. Mit <em>ls</em> habe ich mir
+                    einen ersten Überblick der Daten im aktuellen Verzeichnis verschafft. <br>Da hier keine passende
+                    Datei liegt habe ich den <em>find</em> Befehl für eine ausführliche Suche genutzt (türkis markiert):
+                </p>
+                <p>Der verwendete Suchebefehl lautet: <code>find / -type f -name "*user.txt*" 2>/dev/null</code><br>Den
+                    Inhalt der gefundenen Datei habe ich mir dem <em>cat</em> Befehl ausgeben lassen.</p>
+                <p><img src="../../assets/img/posts/writeups/billing-5.png" alt=""></p>
+                <p>Aufgabe 1, und damit der leichte Teil, ist gelöst.</p>
+                <details>
+                    <summary>Lösung anzeigen (ACHTUNG: SPOILER)</summary>
+                    <p class="flag">THM{4a6831d5f124b25eefb1e92e0f0da4ca}</p>
+                </details>
+                <hr>
+                <p class="sub-header">Aufgabe 2</p>
+                <blockquote>| What is root.txt?</blockquote>
+                <p>Dieser Teil war etwas kniffliger. Da wir in der aktuellen Session kein Root Nutzer sind, und der
+                    Befehl <code>sudo -i</code> auch nicht funktioniert, muss eine sogenannte <span>Privilege
+                        Escalation</span> durchgeführt werden.</p>
+                <p>Bei Linux Maschinen lasse ich mir erstmal anzeigen, welche Befehl ich mit sudo Rechten ausführen
+                    kann: <code>sudo -l</code></p>
+                <p><img src="../../assets/img/posts/writeups/billing-6.png" alt=""></p>
+                <p>Da ich fail2ban nicht kannte zu diesem Zeitpunkt, habe ich auch hier wieder im Internet gesucht.
+                    <br>Diese Webseite <a href="https://juggernaut-sec.com/fail2ban-lpe/">fail2ban Privilege
+                        Escalation</a> hat mir letztendlich alle nötigen Informationen geliefert.
+                </p>
+                <p>Zusammengefasst habe ich mir alle Inhalte im <span>/etc/fail2ban/</span>-Verzeichnis anzeigen lassen:
+                </p>
+                <p><img src="../../assets/img/posts/writeups/billing-7.png" alt=""></p>
+                <p>Anschließend im /tmp/-Verzeichnis einen fail2ban Ordner mit angelegt und danach mir <em>rsync</em>
+                    die Inhalte von <span>/etc/fail2ban/</span> zum neuen <span>/tmp/fail2ban/</span> Verzeichnis
+                    kopiert/synchronisiert.</p>
+                <p><img src="../../assets/img/posts/writeups/billing-8.png" alt=""></p>
+                <p>Der Befehl <code>sudo /usr/bin/fail2ban-client status</code>zeigt den aktuellen Status des
+                    Fail2ban-Dienstes an, einschließlich einer Liste aller aktiven Jails (z. B. sshd) und deren
+                    aktueller Status (z. B. Anzahl gebannter IPs).</p>
+                <p>Danach kann der Befehl <code>sudo /usr/bin/fail2ban-client get sshd actions</code> ausgeführt werden,
+                    um alle Aktionen, die für das sshd-Jail konfiguriert sind, aufzulisten. <br>In diesem Fall ist das
+                    <span>iptables-multiport</span>
+                </p>
+                <p><img src="../../assets/img/posts/writeups/billing-9.png" alt=""></p>
+                <p>Falls der sshd Service noch nicht läuft, kann dieser mit
+                    <code>sudo /usr/bin/fail2ban-client start sshd</code> aktiviert werden.
+                </p>
+                <p>Danach können wir versuchen einen Shellbefehl auszuführen. Dazu den Befehl
+                    <code>sudo /usr/bin/fail2ban-client set sshd action iptables-multiport actionban "/bin/bash -c 'cat /root/root.txt > /tmp/root.txt && chmod 666 /tmp/root.txt'"</code>ausführen.
+                </p>
+                <p>Diser Befehl konfiguriert die <em>actionban</em>-Aktion des sshd-Jails so, dass beim Bannen einer
+                    IP-Adresse der Inhalt der Datei <span>/root/root.txt</span> in <span>/tmp/root.txt</span> kopiert
+                    und die Berechtigungen der Datei auf 666 (les- und schreibbar für alle) gesetzt wird.
+                <p>Wenn nun der <em>localhost (127.0.0.1)</em> mit dem Befehl gebannt wird, wird die Aktion und damit
+                    der zuvor aufgebaute Bash-Befehl zum extrahieren der root.txt ausgeführt.</p>
+                <p><code>sudo /usr/bin/fail2ban-client set sshd banip 127.0.0.1</code></p>
+                <p><img src="../../assets/img/posts/writeups/billing-10.png" alt=""></p>
+                <p>Die Aufgaben sind gelöst. Eine einfache CTF-Herausforderung, die dennoch etwas Kreativität erfordert.</p>
+                <details>
+                    <summary>Lösung anzeigen (ACHTUNG: SPOILER)</summary>
+                    <p class="flag">THM{33ad5b530e71a172648f424ec23fae60}</p>
+                </details>
+                <hr>
+                <p>Bei Fragen gerne Rückmeldung an mich.</p>
+                <p>k-kaufhold</p>
+
+            </article>
+        </section>
+
+    </main>
+    <footer>
+        <div></div>
+    </footer>
+</body>
+
+</html>
