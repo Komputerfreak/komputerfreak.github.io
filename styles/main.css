@@ -20,6 +20,10 @@ body {
     max-width: 90vw;
 }
 
+li {
+    line-height: 1.5;
+}
+
 h1 {
     color: var(--accent-color);
 }
