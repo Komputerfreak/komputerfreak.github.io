@@ -28,7 +28,7 @@
                 <blockquote>| What is user.txt?</blockquote>
                 <p>Der erste Schritt, den ich so gut wie immer in einer CTF mit einer Ziel-IP durchführe, ist die IP mit
                     Port 80 im Browser einzugeben.</p>
-                <p><img src="../../assets/img/posts/writeups/billing-1.png" alt=""></p>
+                <p><img src="../../assets/img/posts/writeups/billing-1.png" alt="" onclick="openFullscreen(this)"></p>
                 <p>Hier erscheint ein Anmeldefenster und im Tab ist der Titel <span>MagnusBilling</span> zu erkennen.
                 </p>
                 <p>Zusätzlich ist das Verzeichnis der Startseite zu erkennen. Mit Gobuster können wir weitere
@@ -37,13 +37,13 @@
                     <br><code>gobuster dir -u http://10.10.206.85/mbilling/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt</code>
                 </p>
                 <p>Das Ergebnis ist in folgendem Bild zu sehen:</p>
-                <p><img src="../../assets/img/posts/writeups/billing-2.png" alt=""></p>
+                <p><img src="../../assets/img/posts/writeups/billing-2.png" alt="" onclick="openFullscreen(this)"></p>
                 <p>Wenn wir alle Verzeichnisse manuell durchprobieren, also <em>Target-IP:80/mbilling/archive</em>,
                     <em>Target-IP:80/mbilling/resources</em> usw. stoßen wir auf keine interessanten Daten :-(
                 </p>
                 <p>Deswegen habe ich mit dem Tool nmap fortgesetzt:</p>
                 <p><code>nmap -A -T4 10.10.206.85</code><br>Dabei erhielt ich folgende Ausgabe: <br> <img
-                        src="../../assets/img/posts/writeups/billing-3.png" alt=""> </p>
+                        src="../../assets/img/posts/writeups/billing-3.png" alt="" onclick="openFullscreen(this)"> </p>
                 <p>Aber auch hier sind lediglich ein bekannter Service (Port 80) und 2 weitere, aber relativ
                     uninteressante Dienste entdeckt worden.</p>
                 <p>An dieser Stelle führe ich meistens mit einer Internetrecherche fort. Also habe ich
@@ -52,7 +52,7 @@
                         2023-30258</a>) mit interessanten Informationen.</p>
                 <p>Also habe ich Metasploit gestartet und nach dieser CVE gesucht und einen passenden Exploit gefunden:
                 </p>
-                <p><img src="../../assets/img/posts/writeups/billing-4.png" alt=""></p>
+                <p><img src="../../assets/img/posts/writeups/billing-4.png" alt="" onclick="openFullscreen(this)"></p>
                 <p>In meinem Fall habe ich mit <code>use 0</code> den Exploit ausgewählt.</p>
                 <p>Hier muss nur noch der passende <span>LHOST</span> (die eigene THM-VPN IP) und RHOST (Ziel-IP)
                     eingegeben werden. <br>Anschließend <em>run</em> oder <em>exploit</em> eingeben in msfconsole.</p>
@@ -65,7 +65,7 @@
                 </p>
                 <p>Der verwendete Suchebefehl lautet: <code>find / -type f -name "*user.txt*" 2>/dev/null</code><br>Den
                     Inhalt der gefundenen Datei habe ich mir dem <em>cat</em> Befehl ausgeben lassen.</p>
-                <p><img src="../../assets/img/posts/writeups/billing-5.png" alt=""></p>
+                <p><img src="../../assets/img/posts/writeups/billing-5.png" alt="" onclick="openFullscreen(this)"></p>
                 <p>Aufgabe 1, und damit der leichte Teil, ist gelöst.</p>
                 <details>
                     <summary>Lösung anzeigen (ACHTUNG: SPOILER)</summary>
@@ -79,18 +79,18 @@
                         Escalation</span> durchgeführt werden.</p>
                 <p>Bei Linux Maschinen lasse ich mir erstmal anzeigen, welche Befehl ich mit sudo Rechten ausführen
                     kann: <code>sudo -l</code></p>
-                <p><img src="../../assets/img/posts/writeups/billing-6.png" alt=""></p>
+                <p><img src="../../assets/img/posts/writeups/billing-6.png" alt="" onclick="openFullscreen(this)"></p>
                 <p>Da ich fail2ban nicht kannte zu diesem Zeitpunkt, habe ich auch hier wieder im Internet gesucht.
                     <br>Diese Webseite <a href="https://juggernaut-sec.com/fail2ban-lpe/">fail2ban Privilege
                         Escalation</a> hat mir letztendlich alle nötigen Informationen geliefert.
                 </p>
                 <p>Zusammengefasst habe ich mir alle Inhalte im <span>/etc/fail2ban/</span>-Verzeichnis anzeigen lassen:
                 </p>
-                <p><img src="../../assets/img/posts/writeups/billing-7.png" alt=""></p>
+                <p><img src="../../assets/img/posts/writeups/billing-7.png" alt="" onclick="openFullscreen(this)"></p>
                 <p>Anschließend im /tmp/-Verzeichnis einen fail2ban Ordner mit angelegt und danach mir <em>rsync</em>
                     die Inhalte von <span>/etc/fail2ban/</span> zum neuen <span>/tmp/fail2ban/</span> Verzeichnis
                     kopiert/synchronisiert.</p>
-                <p><img src="../../assets/img/posts/writeups/billing-8.png" alt=""></p>
+                <p><img src="../../assets/img/posts/writeups/billing-8.png" alt="" onclick="openFullscreen(this)"></p>
                 <p>Der Befehl <code>sudo /usr/bin/fail2ban-client status</code>zeigt den aktuellen Status des
                     Fail2ban-Dienstes an, einschließlich einer Liste aller aktiven Jails (z. B. sshd) und deren
                     aktueller Status (z. B. Anzahl gebannter IPs).</p>
@@ -98,7 +98,7 @@
                     um alle Aktionen, die für das sshd-Jail konfiguriert sind, aufzulisten. <br>In diesem Fall ist das
                     <span>iptables-multiport</span>
                 </p>
-                <p><img src="../../assets/img/posts/writeups/billing-9.png" alt=""></p>
+                <p><img src="../../assets/img/posts/writeups/billing-9.png" alt="" onclick="openFullscreen(this)">   </p>
                 <p>Falls der sshd Service noch nicht läuft, kann dieser mit
                     <code>sudo /usr/bin/fail2ban-client start sshd</code> aktiviert werden.
                 </p>
@@ -111,7 +111,7 @@
                 <p>Wenn nun der <em>localhost (127.0.0.1)</em> mit dem Befehl gebannt wird, wird die Aktion und damit
                     der zuvor aufgebaute Bash-Befehl zum extrahieren der root.txt ausgeführt.</p>
                 <p><code>sudo /usr/bin/fail2ban-client set sshd banip 127.0.0.1</code></p>
-                <p><img src="../../assets/img/posts/writeups/billing-10.png" alt=""></p>
+                <p><img src="../../assets/img/posts/writeups/billing-10.png" alt="" onclick="openFullscreen(this)"></p>
                 <p>Die Aufgaben sind gelöst. Eine einfache CTF-Herausforderung, die dennoch etwas Kreativität erfordert.</p>
                 <details>
                     <summary>Lösung anzeigen (ACHTUNG: SPOILER)</summary>
@@ -128,6 +128,7 @@
     <footer>
         <div></div>
     </footer>
+    <script src="../../scripts/script.js"></script>
 </body>
 
 </html>

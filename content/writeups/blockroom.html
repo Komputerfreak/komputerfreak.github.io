@@ -38,7 +38,7 @@
                 <p>Starte mit dem Öffnen der <span>.pcapng</span>-Datei in <em>Wireshark</em>.</p>
                 <p>Den Nutzer und damit die Lösung der ersten Frage, kannst du in der Zeile der NTLMSSP
                     Authentifizierung sehen:</p>
-                <p><img src="../../assets/img/posts/writeups/block-1.png" alt="test image"></p>
+                <p><img src="../../assets/img/posts/writeups/block-1.png" alt="test image" onclick="openFullscreen(this)"></p>
                 <details>
                     <summary>Lösung anzeigen (ACHTUNG: SPOILER)</summary>
                     <p class="flag">mrealman</p>
@@ -53,11 +53,11 @@
                     (<code>python3 -m venv .venv</code>), diese aktivierst (<code>source .venv/bin/activate</code>) und
                     danach mit <code>pip install pypykatz</code> das tool innerhalb der <em>venv</em> installierst.</p>
                 <p>Anschließend kannst du dir mit der Option <code>-h</code> die Hilfe anzeigen lassen:</p>
-                <p><img src="../../assets/img/posts/writeups/block-2.png" alt="pypykatz"></p>
+                <p><img src="../../assets/img/posts/writeups/block-2.png" alt="pypykatz" onclick="openFullscreen(this)"></p>
                 <p>Hier ist die Option <code>lsa</code> die Richtige für unser <span>lsass.dmp file</span>.</p>
                 <p>Mit dem Befehl: <code>pypykatz lsa minidump lsass.DMP</code> lassen sich nun wichtige Informationen
                     aus der Datei extrahieren.</p>
-                <p><img src="../../assets/img/posts/writeups/block-3.png" alt="pypykatz"></p>
+                <p><img src="../../assets/img/posts/writeups/block-3.png" alt="pypykatz" onclick="openFullscreen(this)"></p>
                 <p>Dieser NT-Hash kann nun mit <a href="https://crackstation.net/" target="_blank">Crackstation</a> oder
                     einem Tool wie <em>John-The-Ripper</em> gecracked werden.</p>
                 <p>Ich werde in diesem Durchlauf mit <em>John-The-Ripper</em> versuchen diesen Hash zu knacken.</p>
@@ -76,10 +76,10 @@
                     <code>john --format=nt --wordlist=/pfad/zu/deinem_wörterbuch.txt nt-hashes.txt</code>
                 </p>
                 <p>Hier der Befehl mit der <em>Rockyou.txt</em> Wordlist und dem erfolgreichen Crackdurchlauf:</p>
-                <p><img src="../../assets/img/posts/writeups/block-3-1.png" alt="pypykatz"></p>
+                <p><img src="../../assets/img/posts/writeups/block-3-1.png" alt="pypykatz" onclick="openFullscreen(this)"></p>
 
                 <p>Mit Crackstation funktioniert das Cracken des NT-Hashes ebenfalls: </p>
-                <p><img src="../../assets/img/posts/writeups/block-4.png" alt="pypykatz"></p>
+                <p><img src="../../assets/img/posts/writeups/block-4.png" alt="pypykatz" onclick="openFullscreen(this)"></p>
                 <details>
                     <summary>Lösung anzeigen (ACHTUNG: SPOILER)</summary>
                     <p class="flag">Blockbuster1</p>
@@ -94,18 +94,18 @@
                 NT-Hash oder Passwort -> Gefunden in lsass.DMP <br>
                 Mit diesen Informationen können wir in Wireshark entsprechende SMB Pakete entschlüsseln, indem wir das Passwort hinterlegen.</p>
                 <p>Dazu in Wireshark auf <em>Edit -> Preferences -> Protocols</em> und in der Liste <span>NTLMSSP</span> selektieren und das zuvor gefundene Passwort eingeben und unten bestätigen: </p>
-                <p><img src="../../assets/img/posts/writeups/block-4-1.png" alt="pypykatz"></p>
+                <p><img src="../../assets/img/posts/writeups/block-4-1.png" alt="pypykatz" onclick="openFullscreen(this)"></p>
                 <p>Durch die Entschlüsselung der Session, haben wir Zugriff auf die Inhalte der SMB Pakete des Nutzers.</p>
                 <p>Hier fällt eine .csv Datei auf, die öfter genutzt wurde</p>                
-                <p><img src="../../assets/img/posts/writeups/block-4-2.png" alt="pypykatz"></p>
+                <p><img src="../../assets/img/posts/writeups/block-4-2.png" alt="pypykatz" onclick="openFullscreen(this)"></p>
                 <p>Ich nutze nun einen Filter, um evtl. weitere .csv Dateien zu finden. In diesem Beispiel, gibt es recht wenig Datenpakete. In der Realität haben Paket-Mitschnitte mit Wireshark mehrere Tausend Zeilen an Einträgen.</p>
-                <p><img src="../../assets/img/posts/writeups/block-4-3.png" alt="pypykatz"></p>
+                <p><img src="../../assets/img/posts/writeups/block-4-3.png" alt="pypykatz" onclick="openFullscreen(this)"></p>
                 <p>Die gefundene .csv Datei, kann über <em>File -> Export Objects -> SMB</em> exportiert werden.</p>
-                <p><img src="../../assets/img/posts/writeups/block-4-4.png" alt="pypykatz"></p>
+                <p><img src="../../assets/img/posts/writeups/block-4-4.png" alt="pypykatz" onclick="openFullscreen(this)"></p>
                 <p>Ich speichere diese als <em>export.csv</em>.</p>
-                <p><img src="../../assets/img/posts/writeups/block-4-5.png" alt="pypykatz"></p>
+                <p><img src="../../assets/img/posts/writeups/block-4-5.png" alt="pypykatz" onclick="openFullscreen(this)"></p>
                 <p>Diese exportierte Datei kann nun mit einem Texteditor geöffnet werden und der Inhalt eingesehen werden. Hier ist auch die Lösung der 3. Aufgabe zu sehen:</p>
-                <p><img src="../../assets/img/posts/writeups/block-4-6.png" alt="pypykatz"></p>
+                <p><img src="../../assets/img/posts/writeups/block-4-6.png" alt="pypykatz" onclick="openFullscreen(this)"></p>
                 <details>
                     <summary>Lösung anzeigen (ACHTUNG: SPOILER)</summary>
                     <p class="flag">THM{SmB_DeCrypTing_who_Could_Have_Th0ughT}</p>
@@ -114,7 +114,7 @@
                 <p class="sub-header">Aufgabe 4</p>
                 <blockquote>| What is the username of the second person who accessed our server?</blockquote>
                 <p>Die Lösung der Aufgabe ist in der zu Beginn geparsten lsass.dmp Datei weiter unten zu finden:</p>
-                <p><img src="../../assets/img/posts/writeups/block-5.png" alt="pypykatz"></p>
+                <p><img src="../../assets/img/posts/writeups/block-5.png" alt="pypykatz" onclick="openFullscreen(this)"></p>
                 <details>
                     <summary>Lösung anzeigen (ACHTUNG: SPOILER)</summary>
                     <p class="flag">eshellstrop</p>
@@ -123,7 +123,7 @@
                 <p class="sub-header">Aufgabe 5</p>
                 <blockquote>| What is the hash of the user in question 4?</blockquote>
                 <p>Diese Lösung ist ebenfalls in der gleichen Aufgabe unter <em>NT:XXX</em> zu finden:</p>
-                <p><img src="../../assets/img/posts/writeups/block-5.png" alt="pypykatz"></p>
+                <p><img src="../../assets/img/posts/writeups/block-5.png" alt="pypykatz" onclick="openFullscreen(this)"></p>
                 <details>
                     <summary>Lösung anzeigen (ACHTUNG: SPOILER)</summary>
                     <p class="flag">3f29138a04aadc19214e9c04028bf381</p>
@@ -133,36 +133,36 @@
                 <blockquote>| What is the flag that the second user got access to?</blockquote>
                 <p>Da wir den <span>Hash</span> und den <span>Nutzer</span> haben, kann nun eine 2. Textdatei mit dem Hash zum Cracken mit <em>John-The-Ripper</em> angelegt werden.</p>
                 <p>Allerdings führt dieser Weg hier nicht zum Erfolg. Weder Crackstation, noch John-The-Ripper können den NT-Hash cracken:</p>
-                <p><img src="../../assets/img/posts/writeups/block-6.png" alt="pypykatz"> <img src="../../assets/img/posts/writeups/block-6-1.png" alt="Crackstation"></p>
+                <p><img src="../../assets/img/posts/writeups/block-6.png" alt="pypykatz" onclick="openFullscreen(this)"> <img src="../../assets/img/posts/writeups/block-6-1.png" alt="Crackstation" onclick="openFullscreen(this)"></p>
                 <p>Folglich versuche ich einen anderen Ansatz. Über die <em>.pcapng</em>-Datei können wir, zusätzlich zum geparsten Hash, folgende Informationen zum Nutzer <span>eshellstrop</span> extrahieren:</p>
                 <ul>
                     <li>Nutzer: <span>eshellstrop</span> (aus pcapng)</li>
                     <li>Domain: <span>WORKGROUP</span> (aus pcapng)</li>
-                    <li>NTProofStr: <span>0ca6227a4f00b9654a48908c4801a0ac</span> (aus pcapng)<br><img src="../../assets/img/posts/writeups/block-8.png" alt=""></li>
+                    <li>NTProofStr: <span>0ca6227a4f00b9654a48908c4801a0ac</span> (aus pcapng)<br><img src="../../assets/img/posts/writeups/block-8.png" alt="" onclick="openFullscreen(this)"></li>
                     <li>EncryptedSessionKey: <span>c24f5102a22d286336aac2dfa4dc2e04</span> (aus pcapng) <br><img src="../../assets/img/posts/writeups/block-9.png" alt=""></li>
                     <li>NT-Hash: <span>3f29138a04aadc19214e9c04028bf381</span> (geparsed aus dmp-Datei) </li>
                 </ul>
                 <p>Mit diesen Informationen können wir ein Python Skript nuten, dass auf Github zur Verfügung steht: <a href="https://github.com/djalilayed/tryhackme/blob/main/block/decrypt_SMB3_pcap_nt_hash.py" target="_blank">Python Skript</a></p>
                 <p>Diesen Inhalt der Datei über die Code Ansicht Github kopieren und auf der Kali Maschine eine neue Datei mit .py Endung erzeugen.</p>
-                <p><img src="../../assets/img/posts/writeups/block-7.png" alt=""></p>
+                <p><img src="../../assets/img/posts/writeups/block-7.png" alt="" onclick="openFullscreen(this)"></p>
                 <p>Der Befehl wird nun aus den oben stehenden Informationen aufgebaut und ausgeführt. <br>Folgendes ist die Ausgabe:</p>
-                <p><img src="../../assets/img/posts/writeups/block-10.png" alt=""></p>
+                <p><img src="../../assets/img/posts/writeups/block-10.png" alt="" onclick="openFullscreen(this)"></p>
                 <p>Wichtig ist hier der Random Session Key. Mit diesem und der Session ID können wir die notwendigen Pakete entschlüsseln. Im Folgenden zeige ich wie.</p>
                 <p>In Wireshark suchen wir uns die Session ID für den Nutzer <em>eshellstrop</em></p>
                 <p>Diese ID bekommen wir aus dem gleichen <span>Paket (Nr.82)</span>, aus dem wir die vorherigen Daten auch schon entnehmen konnnten. Auch wieder unter dem <span>SMB2 Bereich</span>:</p>
-                <p><img src="../../assets/img/posts/writeups/block-11.png" alt=""></p>
+                <p><img src="../../assets/img/posts/writeups/block-11.png" alt="" onclick="openFullscreen(this)"></p>
                 <p>Damit dieser Session Key verwendet werden kann müssen die Bytes "umgedreht" werden. Denn Wireshark zeigt die Informationen im <em>little-endian</em> Format (von klein nach groß) </p>
                 <p>Das heißt ein Byte = 1 HEX Wertepaar oder in dem Session Key ein Zahlenpaar, bestehend aus 2 Ziffern.</p>
                 <p>Aus <em>0x <span>00 00 10 00 00 00 00 45</span></em> wird <em>0x <span>45 00 00 00 00 10 00 00</span></em> </p>
                 <p>Diesen Big-Endian Format Key können wir nun in Wireshark wie folgt nutzen, um die SMB Pakete zu entschlüsseln:</p>
                 <p>Dazu in Wireshark wieder auf <em>Edit -> Preferences -> Protocols</em> und in der Liste diesmal<span>SMB2</span> selektieren und <em>Edit...</em> klicken </p>
-                <p><img src="../../assets/img/posts/writeups/block-12.png" alt=""></p>
+                <p><img src="../../assets/img/posts/writeups/block-12.png" alt="" onclick="openFullscreen(this)"></p>
                 <p>Danach die <span>Session-ID im Big-Endian Format</span> eigeben und den zuvor <span>extrahierten RandomSK</span>, anschließend unten bestätigen und Apply klicken:</p>
-                <p><img src="../../assets/img/posts/writeups/block-13.png" alt=""></p>
+                <p><img src="../../assets/img/posts/writeups/block-13.png" alt="" onclick="openFullscreen(this)"></p>
                 <p>Nun wieder über <em>File -> Export Objects -> SMB</em> die neue .csv exportieren.</p>
-                <p><img src="../../assets/img/posts/writeups/block-14.png" alt=""></p>
+                <p><img src="../../assets/img/posts/writeups/block-14.png" alt="" onclick="openFullscreen(this)"></p>
                 <p>Diese kann nun im Texteditor geöffnet werden und die letzte Flag entnommen werden:</p>
-                <p><img src="../../assets/img/posts/writeups/block-15.png" alt=""></p>
+                <p><img src="../../assets/img/posts/writeups/block-15.png" alt="" onclick="openFullscreen(this)"></p>
                 <details>
                     <summary>Lösung anzeigen (ACHTUNG: SPOILER)</summary>
                     <p class="flag">THM{No_PasSw0Rd?_No_Pr0bl3m}</p>
@@ -178,6 +178,7 @@
     <footer>
         <div></div>
     </footer>
+    <script src="../../scripts/script.js"></script>
 </body>
 
 </html>
